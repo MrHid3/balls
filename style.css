@@ -1,0 +1,15 @@
+.big{
+    margin: 0 auto;
+    width: fit-content;
+}
+
+.mid{
+    display: flex;
+    flex-direction: row;
+}
+
+.small{
+    border: 2px solid black;
+    height: 50px;
+    width: 50px;
+}
