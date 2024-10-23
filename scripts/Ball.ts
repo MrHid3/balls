@@ -1,8 +1,12 @@
-class Kulka{
+import {Tile} from "./Tile"
+import {IBall} from "../interfaces/IBall"
+
+
+export class Ball implements IBall{
     color: string;
     x: number;
     y: number;
-    
+
     constructor(color: string){
         this.color = color;
         this.x = Math.floor(Math.random() * 10);
@@ -25,8 +29,3 @@ for(let i = 0; i < 10; i++){
         table[i][j] = 0;
     }
 }
-
-
-
-let tak = new Kulka("red");
-tak.draw()
