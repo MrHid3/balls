@@ -1,11 +1,13 @@
-.big{
+#BIG{
     margin: 0 auto;
     width: fit-content;
+    border: 2px solid black;
 }
 
 .mid{
     display: flex;
     flex-direction: row;
+    width: fit-content;
 }
 
 .small{

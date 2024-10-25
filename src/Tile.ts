@@ -1,15 +1,17 @@
-import {ITile} from "../interfaces/ITile"
+import {ITile} from "./interfaces/ITile.ts"
 
 export class Tile implements ITile{
     x: number;
     y: number;
-    field: HTMLElement;
     cont: HTMLElement;
+    field: HTMLElement;
+    color: string = "none";
 
     constructor(x: number, y: number, cont: HTMLElement){
         this.x = x;
         this.y = y;
-        this.field = cont.children[y].children[x] as HTMLElement;
+        this.cont = cont;
+        this.field = this.cont.children[y].children[x] as HTMLElement;
     }
 
     isEmpty(){
