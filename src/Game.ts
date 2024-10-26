@@ -12,6 +12,8 @@ export class Game implements IGame{
     constructor(contId: string){
         this.cont = document.getElementById(contId) as HTMLElement;
         this.createBoard();
+        this.playingField[2][5].setColor("cornflowerblue");
+        this.playingField[7][3].setColor("bisque");
         this.createBall();
         this.createBall();
         this.createBall();
@@ -30,7 +32,13 @@ export class Game implements IGame{
         this.createBall();
         this.createBall();
         this.createBall();
-        console.log(this.pathFinder(0, 0, 4, 4))
+        this.createBall();
+        this.createBall();
+        let result: null | number[][] = this.pathFinder(5, 2, 3, 7);
+        if(result) result.forEach((e: number[]) => {
+            this.playingField[e[0]][e[1]].setColor("gray");
+        })
+        else console.log(result);
     }
 
     createBoard(){
@@ -64,15 +72,18 @@ export class Game implements IGame{
         this.playingField[y][x].setColor(this.colors[color]);
     }
 
-    pathFinder(x1: number, y1: number, x2: number, y2: number): number | boolean{
+    pathFinder(x1: number, y1: number, x2: number, y2: number): number[][] | null{
+        if(this.playingField[y1][x1].color == "none" || this.playingField[y2][x2].color == "none") return null;
         let table: number[][] | null[][] = [];
         for(let i = 0; i < this.height; i++){
             table[i] = [];
             for(let j = 0; j < this.width; j++){
-                if(this.playingField[i][j].color == "none")
+                if(this.playingField[i][j].color == "none"){
                     table[i][j] = null;
-                else
+                }else{
                     table[i][j] = 0;
+                }
+
             }
         }
         table[y1][x1] = -1;
@@ -81,23 +92,37 @@ export class Game implements IGame{
         if(y1 != 8 && table[y1 + 1][x1] == null) table[y1 + 1][x1] = 1;
         if(x1 != 0 && table[y1][x1 - 1] == null) table[y1][x1 - 1] = 1;
         if(x1 != 8 && table[y1][x1 + 1] == null) table[y1][x1 + 1] = 1;
-        for(let i = 1; i <= this.height; i++){
+        for(let i = 1; i < 100; i++){
             for(let j = 0; j < this.height; j++){
                 for(let k = 0; k < this.width; k++){
                     if(table[j][k] == i){
-                        if(j != 0 && table[j - 1][k] == null) table[j - 1][k] = i + 1;
-                        if(j != 8 && table[j + 1][k] == null) table[j + 1][k] = i + 1;
-                        if(k != 0 && table[j][k - 1] == null) table[j][k - 1] = i + 1;
-                        if(k != 8 && table[j][k + 1] == null) table[j][k + 1] = i + 1;
+                        if(j != 0 && (table[j - 1][k] == null || table[j - 1][k]! > table[j][k]! + 1)) table[j - 1][k] = i + 1;
+                        if(j != 8 && (table[j + 1][k] == null || table[j + 1][k]! > table[j][k]! + 1)) table[j + 1][k] = i + 1;
+                        if(k != 0 && (table[j][k - 1] == null || table[j][k - 1]! > table[j][k]! + 1)) table[j][k - 1] = i + 1;
+                        if(k != 8 && (table[j][k + 1] == null || table[j][k + 1]! > table[j][k]! + 1)) table[j][k + 1] = i + 1;
                         if(j != 0 && table[j - 1][k] == -2
                             || j != 8 && table[j + 1][k] == -2
                             || k != 0 && table[j][k - 1] == -2
                             || k != 8 && table[j][k + 1] == -2
-                        ) return i;
+                        ){
+                            let result : number[][] = [];
+                            let counter: number = 0;
+                            while(table[j][k] != 1){
+                                result[counter] = [j, k];
+                                if(j != 0 && table[j - 1][k] == table[j][k]! - 1) j -= 1
+                                else if(j != 8 && table[j + 1][k] == table[j][k]! - 1) j += 1;
+                                else if(k != 0 && table[j][k - 1] == table[j][k]! - 1) k -= 1;
+                                else if(k != 8 && table[j][k + 1] == table[j][k]! - 1) k += 1;
+                                counter++;
+                            }
+                            counter++;
+                            result[counter] = [j, k];
+                            return result;
+                        }
                     }
                 }
             }
         }
-        return false;
+        return null;
     }
 }

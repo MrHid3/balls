@@ -20,5 +20,6 @@ export class Tile implements ITile{
 
     setColor(color: string){
         this.field.style.backgroundColor = color;
+        this.color = color;
     }
 }
