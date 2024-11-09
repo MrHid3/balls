@@ -47,7 +47,7 @@ export class Game implements IGame{
         }
     }
 
-    createBall(color: string = "black"){
+    createBall(color: string = "black"): void{
         let counter: number = 1;
         let x: number = Math.floor(Math.random() * this.width);
         let y: number = Math.floor(Math.random() * this.height);
@@ -61,7 +61,6 @@ export class Game implements IGame{
 
     pathFinder(x1: number, y1: number, x2: number, y2: number): number[][] | null{
         let table: number[][] | null[][] = [];
-        let counter: number = 0;
         for(let i = 0; i < this.height; i++){
             table[i] = [];
             for(let j = 0; j < this.width; j++){
@@ -69,7 +68,6 @@ export class Game implements IGame{
                     table[i][j] = null;
                 }else{
                     table[i][j] = -3;
-                    counter++;
                 }
 
             }
@@ -77,14 +75,20 @@ export class Game implements IGame{
         table[y1][x1] = -1;
         table[y2][x2] = -2;
         let current: number = -1;
-        while(counter < this.height * this.width){
+        let didIt = true;
+
+        while(didIt){
+            didIt =     false;
             for(let i = 0; i < this.height; i++){
                 for(let j = 0; j < this.width; j++){
+                    console.table(table);
+                    console.log(current);
+                    console.log(didIt);
                     if(table[i][j] === current){
-                        if(j !== 0 && table[i][j - 1] === null) {table[i][j - 1] = current + 1; counter++;}
-                        if(j !== 8 && table[i][j + 1] === null) {table[i][j + 1] = current + 1; counter++;}
-                        if(i !== 0 && table[i - 1][j] === null) {table[i - 1][j] = current + 1; counter++;}
-                        if(i !== 8 && table[i + 1][j] === null) {table[i + 1][j] = current + 1; counter++;}
+                        if(j !== 0 && table[i][j - 1] === null) {table[i][j - 1] = current + 1; didIt = true}
+                        if(j !== 8 && table[i][j + 1] === null) {table[i][j + 1] = current + 1; didIt = true}
+                        if(i !== 0 && table[i - 1][j] === null) {table[i - 1][j] = current + 1; didIt = true}
+                        if(i !== 8 && table[i + 1][j] === null) {table[i + 1][j] = current + 1; didIt = true}
                         if(j !== 0 && table[i][j - 1] === -2
                             || j !== 8 && table[i][j + 1] === -2
                             || i !== 0 && table[i - 1][j] === -2
@@ -157,7 +161,7 @@ export class Game implements IGame{
         });
     }
 
-    newNextColors(){
+    newNextColors() : void{
         this.nextColor1 = this.colors[Math.floor(Math.random() * this.colors.length)];
         this.nextColor2 = this.colors[Math.floor(Math.random() * this.colors.length)];
         this.nextColor3 = this.colors[Math.floor(Math.random() * this.colors.length)];
