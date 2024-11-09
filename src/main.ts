@@ -1,3 +1,3 @@
-import {Game} from "./Game.ts"
+import {Game} from "./Game"
 
 new Game("BIG");

@@ -4,6 +4,6 @@ export interface ITile{
     field: HTMLElement;
 
     isEmpty() : boolean;
-
     setColor(color: string) : void;
+    click() : void;
 }
