@@ -78,7 +78,7 @@ export class Game implements IGame{
         let didIt = true;
 
         while(didIt){
-            didIt =     false;
+            didIt = false;
             for(let i = 0; i < this.height; i++){
                 for(let j = 0; j < this.width; j++){
                     console.table(table);
