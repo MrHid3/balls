@@ -1,3 +1,5 @@
+import {Tile} from "../Tile";
+
 export interface ITile{
     x: number;
     y: number;
@@ -5,5 +7,6 @@ export interface ITile{
 
     isEmpty() : boolean;
     setColor(color: string) : void;
-    click() : void;
+    click() : void
+    move(tile: Tile) : void
 }
