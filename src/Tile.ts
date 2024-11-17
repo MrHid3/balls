@@ -6,6 +6,7 @@ export class Tile implements ITile{
     cont: HTMLElement;
     field: HTMLElement;
     color: string = "transparent";
+    pathColor: string = "transparent";
     isClicked : boolean = false;
 
     constructor(x: number, y: number, cont: HTMLElement){
@@ -22,6 +23,12 @@ export class Tile implements ITile{
     setColor(color: string = "transparent") : void{
         this.field.style.backgroundColor = color;
         this.color = color;
+        // this.pathColor = "transparent";
+    }
+
+    setPathColor(color: string = "transparent") : void{
+        this.field.style.backgroundColor = color;
+        this.pathColor = color;
     }
 
     click() : void{

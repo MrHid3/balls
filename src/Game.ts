@@ -5,28 +5,32 @@ import {IGame} from "./interfaces/IGame"
 export class Game implements IGame{
     readonly width : number = 9;
     readonly height: number = 9;
+    readonly clickedPathColor: string = "#f56262";
+    readonly hoveredPathColor: string = "#62c9f5";
     cont: HTMLElement;
     colors: string[] = ["red", "orange", "yellow", "blue", "green", "black", "magenta"]
     playingField: Tile[][] = [];
-    nextColor1 : string;
-    nextColor2 : string;
-    nextColor3: string;
-    clicked = {
-        x1: -1,
-        y1: -1,
-        x2: -1,
-        y2: -1,
-        length: 0,
+    nextColors: string[] = [];
+    path: Tile[] = [];
+    clicked : {
+        one : Tile,
+        two : Tile,
+        length: number,
     }
 
     constructor(contId: string){
         this.cont = document.getElementById(contId) as HTMLElement;
         this.createBoard();
+        this.clicked = {
+            one : new Tile(0, 0, this.cont),
+            two : new Tile(0, 0, this.cont),
+            length :     0,
+        }
         this.newNextColors();
 
-        this.pushBalls(this.colors[1], this.colors[2], this.colors[3]);
+        this.pushBalls(this.nextColors);
         this.readInput();
-
+        this.readHover();
     }
 
     createBoard(){
@@ -48,18 +52,16 @@ export class Game implements IGame{
     }
 
     createBall(color: string = "black"): void{
-        let counter: number = 1;
         let x: number = Math.floor(Math.random() * this.width);
         let y: number = Math.floor(Math.random() * this.height);
-        while(this.playingField[y][x].color != "transparent" || counter > 81){
+        while(this.playingField[y][x].color != "transparent"){
             x = Math.floor(Math.random() * this.width);
             y = Math.floor(Math.random() * this.height);
-            counter++;
         }
         this.playingField[y][x].setColor(color);
     }
 
-    pathFinder(x1: number, y1: number, x2: number, y2: number): number[][] | null{
+    pathFinder(tile1: Tile, tile2: Tile): Tile[] | null{
         let table: number[][] | null[][] = [];
         for(let i = 0; i < this.height; i++){
             table[i] = [];
@@ -72,8 +74,8 @@ export class Game implements IGame{
 
             }
         }
-        table[y1][x1] = -1;
-        table[y2][x2] = -2;
+        table[tile1.y][tile1.x] = -1;
+        table[tile2.y][tile2.x] = -2;
         let current: number = -1;
         let didIt = true;
 
@@ -81,9 +83,6 @@ export class Game implements IGame{
             didIt = false;
             for(let i = 0; i < this.height; i++){
                 for(let j = 0; j < this.width; j++){
-                    console.table(table);
-                    console.log(current);
-                    console.log(didIt);
                     if(table[i][j] === current){
                         if(j !== 0 && table[i][j - 1] === null) {table[i][j - 1] = current + 1; didIt = true}
                         if(j !== 8 && table[i][j + 1] === null) {table[i][j + 1] = current + 1; didIt = true}
@@ -93,9 +92,9 @@ export class Game implements IGame{
                             || j !== 8 && table[i][j + 1] === -2
                             || i !== 0 && table[i - 1][j] === -2
                             || i !== 8 && table[i + 1][j] === -2){
-                            let result : number[][] = [];
+                            let result : Tile[] = [];
                             while(table[i][j] !== -1){
-                                result.push([i ,j]);
+                                result.push(this.playingField[i][j]);
                                 if(i != 0 && table[i - 1][j] == table[i][j] - 1) i -= 1
                                 else if(i != 8 && table[i + 1][j] == table[i][j] - 1) i += 1;
                                 else if(j != 0 && table[i][j - 1] == table[i][j] - 1) j -= 1;
@@ -111,10 +110,10 @@ export class Game implements IGame{
         return null
     }
 
-    pushBalls(color1? :string,color2? :string,color3? :string): void{
-        this.createBall(color1);
-        this.createBall(color2);
-        this.createBall(color3);
+    pushBalls(colors: string[]): void{
+        colors.forEach((color) => {
+            this.createBall(color);
+        })
     }
 
     readInput() : void{
@@ -124,25 +123,30 @@ export class Game implements IGame{
                     if(this.clicked.length === 0){
                         if(!grandchild.isEmpty()){
                             grandchild.click();
-                            this.clicked.x1 = grandchild.x;
-                            this.clicked.y1 = grandchild.y;
+                            this.clicked.one = this.playingField[grandchild.y][grandchild.x];
                             this.clicked.length = 1;
                         }
                     }
                     else if(this.clicked.length === 1){
                         if(grandchild.isEmpty()){
-                            this.clicked.x2 = grandchild.x;
-                            this.clicked.y2 = grandchild.y;
-                            let path : number[][] | null = this.pathFinder(this.clicked.x1, this.clicked.y1, this.clicked.x2, this.clicked.y2);
-                            console.log(path);
-                            if(path !== null){
-                                this.playingField[this.clicked.y1][this.clicked.x1].move(this.playingField[this.clicked.y2][this.clicked.x2]);
-                                this.drawPath(path);
+                            this.clicked.two = this.playingField[grandchild.y][grandchild.x];
+                            if(this.path !== null){
+                                this.clicked.one.move(this.clicked.two);
+                                this.drawPath(this.path, this.clickedPathColor);
                                 this.clicked.length = 0;
                                 setTimeout(() => {
-                                    this.pushBalls(this.nextColor1, this.nextColor2, this.nextColor3);
+                                    this.pushBalls(this.nextColors);
                                     this.newNextColors();
-                                }, 200 * (1 + path.length * 0.15))
+                                }, 200 * (1 + this.path.length * 0.15))
+                            }
+                        } else if (grandchild == this.clicked.one){
+                            this.clicked.one.click();
+                            this.clicked.length = 0;
+                        } else {
+                            this.clicked.one.click();
+                            this.clicked.one = this.playingField[grandchild.y][grandchild.x];
+                            if(this.path !== null){
+                                this.fastDrawPath(this.path);
                             }
                         }
                     }
@@ -151,20 +155,51 @@ export class Game implements IGame{
         })
     }
 
-    drawPath(path: number[][] | null) : void{
+    readHover() : void{
+        this.playingField.forEach(child => {
+            child.forEach(grandchild => {
+                let hovered: Tile
+                grandchild.field.addEventListener("mouseover", () => {
+                    if(this.clicked.length === 1){
+                        hovered = this.playingField[grandchild.y][grandchild.x];
+                        this.path = this.pathFinder(this.clicked.one, hovered);
+                        if(this.path !== null){
+                            this.fastDrawPath(this.path, this.hoveredPathColor);
+                        }
+                    }
+                })
+                grandchild.field.addEventListener("mouseout", () => {
+                    if(this.clicked.length === 1 || this.clicked.length === 2){
+                        if(this.path !== null){
+                            this.fastDrawPath(this.path);
+                        }
+                    }
+                })
+            })
+        })
+    }
+
+    drawPath(path: Tile[] | null, color: string = "transparent") : void{
         path.reverse()
-        path.forEach((e: number[], i) => {
-            this.playingField[e[0]][e[1]].setColor("#f5988e");
+        path.forEach((e: Tile, i : number) => {
+            e.setPathColor(color);
             setTimeout(() => {
-                this.playingField[e[0]][e[1]].setColor();
+                e.setPathColor();
             }, 200 * (1 + i * 0.15));
         });
     }
 
+    fastDrawPath(path: Tile[] | null, color: string = "transparent") : void{
+        path.forEach((e: Tile) => {
+            if(e.isEmpty()){
+                e.setPathColor(color);
+            }
+        });
+    }
+
     newNextColors() : void{
-        this.nextColor1 = this.colors[Math.floor(Math.random() * this.colors.length)];
-        this.nextColor2 = this.colors[Math.floor(Math.random() * this.colors.length)];
-        this.nextColor3 = this.colors[Math.floor(Math.random() * this.colors.length)];
+        for(let i = 0; i < 3; i++)
+            this.nextColors[i] = this.colors[Math.floor(Math.random() * this.colors.length)];
     }
 }
 
