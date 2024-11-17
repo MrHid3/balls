@@ -1,14 +1,28 @@
+import {Tile} from "../Tile";
+
 export interface IGame{
     readonly width: number;
     readonly height: number;
+    readonly clickedPathColor: string;
+    readonly hoveredPathColor: string;
     colors: string[];
     cont: HTMLElement;
+    playingField: Tile[][];
+    nextColors: string[];
+    path: Tile[];
+    clicked : {
+        one : Tile;
+        two: Tile;
+        length: number;
+    }
 
     createBoard(color: string) : void;
     createBall(color: string) : void;
-    pathFinder(x1: number, y1: number, x2: number, y2: number) : number[][] | null;
-    pushBalls(color1? :string,color2? :string,color3? :string) : void;
+    pathFinder(tile1: Tile, tile2: Tile) : Tile[] | null;
+    pushBalls(colors: string[]) : void;
     readInput() : void;
-    drawPath(path: number[][] | null) : void;
+    readHover() : void;
+    drawPath(path: Tile[] | null, color: string) : void;
+    fastDrawPath(path: Tile[] | null, color: string) : void;
     newNextColors() : void;
 }
