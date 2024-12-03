@@ -145,6 +145,7 @@ export class Game implements IGame{
                         } else {
                             this.clicked.one.click();
                             this.clicked.one = this.playingField[grandchild.y][grandchild.x];
+                            this.clicked.one.click();
                             if(this.path !== null){
                                 this.fastDrawPath(this.path);
                             }
