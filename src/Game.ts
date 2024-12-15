@@ -142,6 +142,7 @@ export class Game implements IGame{
                                     this.clicked.one.move(this.clicked.two);
                                     this.pushBalls(this.nextColors);
                                     this.newNextColors();
+                                    this.seekAndDestroy();
                                 }, 200 * (1 + this.path.length * 0.15))
                             }
                         } else if (grandchild == this.clicked.one){
@@ -206,6 +207,59 @@ export class Game implements IGame{
     newNextColors() : void{
         for(let i = 0; i < 3; i++)
             this.nextColors[i] = this.colors[Math.floor(Math.random() * this.colors.length)];
+    }
+
+    seekAndDestroy() : void{
+        let table: number[][] = [];
+        for(let i = 0; i < this.height; i++){
+            table[i] = [];
+            let streak = 1;
+            for(let j = 1; j < this.width; j++){
+                if(this.playingField[i][j].color == this.playingField[i][j - 1].color){
+                    streak++;
+                }else{
+                    if(streak >= 5){
+                        for(let k = 0; k < streak; k++){
+                            table[i][j - k - 1] = -1;
+                        }
+                    }
+                    streak = 1;
+                }
+            }
+            if(streak >= 5){
+                for(let k = 0; k < streak; k++){
+                    table[i][8 - k] = -1;
+                }
+            }
+
+        }
+        for(let j = 0; j < this.width; j++){
+            let streak = 1;
+            for(let i = 1; i < this.height; i++){
+                if(this.playingField[i][j].color == this.playingField[i - 1][j].color){
+                    streak++;
+                }else{
+                    if(streak >= 5){
+                        for(let k = 0; k < streak; k++){
+                            table[i - k - 1][j] = -1;
+                        }
+                    }
+                    streak = 1;
+                }
+            }
+            if(streak >= 5){
+                for(let k = 0; k < streak; k++){
+                    table[8 - k][j] = -1;
+                }
+            }
+        }
+        for(let i = 0; i < this.height; i++){
+            for(let j = 0; j < this.width; j++){
+                if(table[i][j] === -1){
+                    this.playingField[i][j].setColor();
+                }
+            }
+        }
     }
 }
 
