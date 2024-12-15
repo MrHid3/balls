@@ -93,6 +93,10 @@ export class Game implements IGame{
                             || i !== 0 && table[i - 1][j] === -2
                             || i !== 8 && table[i + 1][j] === -2){
                             let result : Tile[] = [];
+                            if(j !== 0 && table[i][j - 1] === -2) result.push(this.playingField[i][j - 1]);
+                            if(j !== 8 && table[i][j + 1] === -2)result.push(this.playingField[i][j + 1]);
+                            if(i !== 0 && table[i - 1][j] === -2)result.push(this.playingField[i - 1][j]);
+                            if(i !== 8 && table[i + 1][j] === -2)result.push(this.playingField[i + 1][j]);
                             while(table[i][j] !== -1){
                                 result.push(this.playingField[i][j]);
                                 if(i != 0 && table[i - 1][j] == table[i][j] - 1) i -= 1
@@ -100,6 +104,7 @@ export class Game implements IGame{
                                 else if(j != 0 && table[i][j - 1] == table[i][j] - 1) j -= 1;
                                 else if(j != 8 && table[i][j + 1] == table[i][j] - 1) j += 1;
                             }
+                            console.table(table)
                             return result
                         }
                     }
@@ -131,10 +136,10 @@ export class Game implements IGame{
                         if(grandchild.isEmpty()){
                             this.clicked.two = this.playingField[grandchild.y][grandchild.x];
                             if(this.path !== null){
-                                this.clicked.one.move(this.clicked.two);
                                 this.drawPath(this.path, this.clickedPathColor);
                                 this.clicked.length = 0;
                                 setTimeout(() => {
+                                    this.clicked.one.move(this.clicked.two);
                                     this.pushBalls(this.nextColors);
                                     this.newNextColors();
                                 }, 200 * (1 + this.path.length * 0.15))
