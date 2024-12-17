@@ -104,7 +104,6 @@ export class Game implements IGame{
                                 else if(j != 0 && table[i][j - 1] == table[i][j] - 1) j -= 1;
                                 else if(j != 8 && table[i][j + 1] == table[i][j] - 1) j += 1;
                             }
-                            console.table(table)
                             return result
                         }
                     }
@@ -140,10 +139,13 @@ export class Game implements IGame{
                                 this.clicked.length = 0;
                                 setTimeout(() => {
                                     this.clicked.one.move(this.clicked.two);
-                                    this.pushBalls(this.nextColors);
-                                    this.newNextColors();
-                                    this.seekAndDestroy();
+                                    setTimeout(() => {
+                                        this.pushBalls(this.nextColors);
+                                        this.newNextColors();
+                                        this.seekAndDestroy();
+                                    }, 200)
                                 }, 200 * (1 + this.path.length * 0.15))
+                                
                             }
                         } else if (grandchild == this.clicked.one){
                             this.clicked.one.click();
@@ -215,7 +217,7 @@ export class Game implements IGame{
             table[i] = [];
             let streak = 1;
             for(let j = 1; j < this.width; j++){
-                if(this.playingField[i][j].color == this.playingField[i][j - 1].color){
+                if(this.playingField[i][j].color == this.playingField[i][j - 1].color && this.playingField[i][j].color != "transparent"){
                     streak++;
                 }else{
                     if(streak >= 5){
@@ -231,12 +233,12 @@ export class Game implements IGame{
                     table[i][8 - k] = -1;
                 }
             }
-
         }
+
         for(let j = 0; j < this.width; j++){
             let streak = 1;
             for(let i = 1; i < this.height; i++){
-                if(this.playingField[i][j].color == this.playingField[i - 1][j].color){
+                if(this.playingField[i][j].color == this.playingField[i - 1][j].color && this.playingField[i][j].color != "transparent"){
                     streak++;
                 }else{
                     if(streak >= 5){
@@ -253,6 +255,56 @@ export class Game implements IGame{
                 }
             }
         }
+
+        for(let i = 1; i < 5; i++){
+            for(let j = 1; j < 5; j++){
+                let streak = 1;
+                for(let k = 0; i + k < 8 && j + k < 8; k++){
+                    if(this.playingField[i + k - 1][j + k - 1].color == this.playingField[i + k][j + k].color && this.playingField[i + k][j + k].color != "transparent"){
+                        streak++;
+                    }else{
+                        if(streak >= 5){
+                            for(let l = 0; l < streak; l++){
+                                table[i + k - l - 1][j + k - l - 1] = -1
+                            }
+                        }
+                        streak = 1;
+                    }
+                }
+                if(streak >= 5 && i + 6 <= 8 && j + 6 <= 8){
+                    for(let l = 0; l < streak; l++){
+                        table[i + 6 - l][j + 6 - l] = -1;
+                    }
+                }
+            }
+
+        }
+        
+        for(let i = 1; i < 5; i++){
+            for(let j = 4; j < 8; j++){
+                let streak = 1;
+                for(let k = 0; j - k > 0 && i + k < 8; k++){
+                    if(this.playingField[i + k - 1][j - k + 1].color == this.playingField[i + k][j - k].color && this.playingField[i + k][j - k].color != "transparent"){
+                        streak++;
+                        console.log(streak)
+                    }else{
+                        if(streak >= 5){
+                            for(let l = 0; l < streak; l++){
+                                table[i + k - l - 1][j - k + l + 1] = -1
+                            }
+                        }
+                        streak = 1;
+                    }
+                }
+                if(streak >= 5 && j - 6 >= 0 && i + 6 < 8){
+                    for(let l = 0; l < streak; l++){
+                        table[i + 6 - l][j - 6 + l] = -1;
+                    }
+                }
+            }
+
+        }
+
         for(let i = 0; i < this.height; i++){
             for(let j = 0; j < this.width; j++){
                 if(table[i][j] === -1){
