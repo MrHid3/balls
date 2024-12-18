@@ -1,11 +1,14 @@
 import {ITile} from "./interfaces/ITile"
+import {IColor} from "./interfaces/IColor";
 
 export class Tile implements ITile{
     x: number;
     y: number;
     cont: HTMLElement;
     field: HTMLElement;
-    color: string = "transparent";
+    color: IColor = {
+        color : "transparent"
+    }
     pathColor: string = "transparent";
     isClicked : boolean = false;
 
@@ -17,16 +20,18 @@ export class Tile implements ITile{
     }
 
     isEmpty(): boolean{
-        return this.color == "transparent";
+        return this.color.color == "transparent";
     }
 
     setColor(color: string = "transparent") : void{
-        this.field.style.backgroundColor = color;
-        this.color = color;
+        this.field.style.backgroundColor = "transparent";
+        this.field.style.backgroundImage = `radial-gradient(circle, ${color} 65%, white 70%, white 100%)`;
+        this.color.color = color;
         // this.pathColor = "transparent";
     }
 
     setPathColor(color: string = "transparent") : void{
+        this.field.style.backgroundImage = "none";
         this.field.style.backgroundColor = color;
         this.pathColor = color;
     }
@@ -42,7 +47,7 @@ export class Tile implements ITile{
 
     move(tile: Tile) : void {
         if(tile.isEmpty()){
-            tile.setColor(this.color);
+            tile.setColor(this.color.color);
             this.field.style.filter = "brightness(1.00)";
             setTimeout(() => {
                 this.setColor();

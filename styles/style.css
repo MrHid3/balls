@@ -19,3 +19,9 @@
 .darker{
     filter: brightness(85%);
 }
+
+#points{
+    margin: 0 auto;
+    font-size: 20px;
+    text-align: center;
+}

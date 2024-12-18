@@ -5,8 +5,11 @@ export interface IGame{
     readonly height: number;
     readonly clickedPathColor: string;
     readonly hoveredPathColor: string;
-    colors: string[];
+    moves: number;
+    canmove: boolean;
+    enabled: boolean;
     cont: HTMLElement;
+    colors: string[];
     playingField: Tile[][];
     nextColors: string[];
     path: Tile[];
@@ -25,4 +28,6 @@ export interface IGame{
     drawPath(path: Tile[] | null, color: string) : void;
     fastDrawPath(path: Tile[] | null, color: string) : void;
     newNextColors() : void;
+    seekAndDestroy() : number;
+    avengers() : void;
 }

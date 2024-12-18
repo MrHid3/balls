@@ -1,11 +1,12 @@
 import {Tile} from "../Tile";
+import {IColor} from "./IColor";
 
 export interface ITile{
     x: number;
     y: number;
     cont: HTMLElement;
     field: HTMLElement;
-    color: string;
+    color: IColor;
     pathColor: string;
     isClicked: boolean;
 
