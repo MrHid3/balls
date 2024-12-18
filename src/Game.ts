@@ -255,54 +255,91 @@ export class Game implements IGame{
                 }
             }
         }
-
-        for(let i = 1; i < 5; i++){
-            for(let j = 1; j < 5; j++){
-                let streak = 1;
-                for(let k = 0; i + k < 8 && j + k < 8; k++){
-                    if(this.playingField[i + k - 1][j + k - 1].color == this.playingField[i + k][j + k].color && this.playingField[i + k][j + k].color != "transparent"){
-                        streak++;
-                    }else{
-                        if(streak >= 5){
-                            for(let l = 0; l < streak; l++){
-                                table[i + k - l - 1][j + k - l - 1] = -1
-                            }
-                        }
-                        streak = 1;
-                    }
-                }
-                if(streak >= 5 && i + 6 <= 8 && j + 6 <= 8){
-                    for(let l = 0; l < streak; l++){
-                        table[i + 6 - l][j + 6 - l] = -1;
-                    }
-                }
-            }
-
-        }
         
-        for(let i = 1; i < 5; i++){
-            for(let j = 4; j < 8; j++){
-                let streak = 1;
-                for(let k = 0; j - k > 0 && i + k < 8; k++){
-                    if(this.playingField[i + k - 1][j - k + 1].color == this.playingField[i + k][j - k].color && this.playingField[i + k][j - k].color != "transparent"){
-                        streak++;
-                        console.log(streak)
-                    }else{
-                        if(streak >= 5){
-                            for(let l = 0; l < streak; l++){
-                                table[i + k - l - 1][j - k + l + 1] = -1
-                            }
+        for(let i = 1; i < 6; i++){
+            let streak = 1;
+            for(let k = 1; i + k < 9; k++){
+                if(this.playingField[i + k][k].color == this.playingField[i + k - 1][k - 1].color && this.playingField[i + k][k].color != "transparent"){
+                    streak++
+                }else{
+                    if(streak >= 5){
+                        for(let l = 1; l <= streak; l++){
+                            table[i + k - l][k - l] = -1;
                         }
-                        streak = 1;
                     }
-                }
-                if(streak >= 5 && j - 6 >= 0 && i + 6 < 8){
-                    for(let l = 0; l < streak; l++){
-                        table[i + 6 - l][j - 6 + l] = -1;
-                    }
+                    streak = 1;
                 }
             }
+            if(streak >= 5){
+                for(let l = 0; l <= streak; l++){
+                    table[8 - l][(8 - i) - l] = -1;
+                }
+            }
+        }
 
+        for(let j = 0; j < 6; j++){
+            let streak = 1;
+            for(let k = 1; j + k < 9; k++){
+                if(this.playingField[k][j + k].color == this.playingField[k - 1][j + k - 1].color && this.playingField[k][j + k].color != "transparent"){
+                    streak++
+                }else{
+                    if(streak >= 5){
+                        for(let l = 1; l <= streak; l++){
+                            table[k - l][j + k - l] = -1;
+                        }
+                    }
+                    streak = 1;
+                }
+            }
+            if(streak >= 5){
+                for(let l = 0; l <= streak; l++){
+                    table[8 - l][(8 - j) - l] = -1;
+                }
+            }
+        }
+
+        for(let i = 1; i < 6; i++){
+            let streak = 1;
+            for(let k = 1; i + k < 9; k++){
+                if(this.playingField[8 - (i + k)][k].color == this.playingField[8 - (i + k - 1)][k - 1].color && this.playingField[8 - (i + k)][k].color != "transparent"){
+                    streak++;
+                }else{
+                    if(streak >= 5){
+                        for(let l = 1; l <= streak; l++){
+                            table[8 - (i + k - l)][k - l] = -1;
+                        }
+                    }
+                    streak = 1;
+                }
+            }
+            if(streak >= 5){
+                for(let l = 0; l <= streak; l++){
+                    table[8 + l][(8 - i) - l] = -1;
+                }
+            }
+        }
+
+        for(let j = 0; j < 5; j++){
+            let streak = 1;
+            for(let k = 1; j + k < 9; k++){
+                // this.playingField[8 - k][j + k].setColor("red");
+                if(this.playingField[8 - k][j + k].color == this.playingField[8 - k + 1][j + k - 1].color && this.playingField[8 - k][j + k].color != "transparent"){
+                    streak++
+                    console.log(streak)
+                }else{
+                    if(streak >= 5){
+                        for(let l = 1; l <= streak; l++){
+                            table[8 - (k - l)][j + k - l] = -1;
+                        }
+                    }
+                    streak = 1;
+                }
+            }
+            if(streak >= 5){
+                for(let l = 1; l <= streak; l++){
+                    table[l][j - l] = -1;
+                }
+            }
         }
 
         for(let i = 0; i < this.height; i++){
