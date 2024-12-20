@@ -136,6 +136,13 @@ export class Game implements IGame{
             child.forEach(grandchild => {
                 grandchild.field.addEventListener("click", () => {
                     if(!this.canmove) return;
+                    if(!(grandchild.x < 8 && this.playingField[grandchild.y][grandchild.x + 1].isEmpty()) &&
+                        !(grandchild.y < 8 && this.playingField[grandchild.y + 1][grandchild.x].isEmpty()) &&
+                        !(grandchild.x > 0 && this.playingField[grandchild.y][grandchild.x - 1].isEmpty()) &&
+                        !(grandchild.y > 0 && this.playingField[grandchild.y - 1][grandchild.x].isEmpty()) &&
+                        !(this.clicked.length === 1 && grandchild.isEmpty())
+                    )
+                        return;
                     if(this.clicked.length === 0){
                         if(!grandchild.isEmpty()){
                             grandchild.click();
@@ -229,6 +236,9 @@ export class Game implements IGame{
         if(!this.enabled) return;
         for(let i = 0; i < 3; i++)
             this.nextColors[i] = this.colors[Math.floor(Math.random() * this.colors.length)];
+        (document.querySelector(".one") as HTMLElement).style.backgroundImage = `radial-gradient(circle, ${this.nextColors[0]} 65%, white 70%, white 100%)`;
+        (document.querySelector(".two") as HTMLElement).style.backgroundImage = `radial-gradient(circle, ${this.nextColors[1]} 65%, white 70%, white 100%)`;
+        (document.querySelector(".three") as HTMLElement).style.backgroundImage = `radial-gradient(circle, ${this.nextColors[2]} 65%, white 70%, white 100%)`;
     }
 
     seekAndDestroy() : number{
@@ -257,7 +267,6 @@ export class Game implements IGame{
         }
 
         for(let j = 0; j < this.width; j++){
-            if(!this.enabled) return;
             let streak = 1;
             for(let i = 1; i < this.height; i++){
                 if(this.playingField[i][j].color.color == this.playingField[i - 1][j].color.color && this.playingField[i][j].color.color != "transparent"){
@@ -294,7 +303,7 @@ export class Game implements IGame{
             }
             if(streak >= 5){
                 for(let l = 0; l <= streak; l++){
-                    table[8 - l][(8 - i) - l] = -1;
+                    table[8 - l][8 - i - l] = -1;
                 }
             }
         }
@@ -315,7 +324,8 @@ export class Game implements IGame{
             }
             if(streak >= 5){
                 for(let l = 0; l <= streak; l++){
-                    table[8 - l][(8 - j) - l] = -1;
+                    table[8 - j - l][8 - l] = -1;
+                    this.playingField[8 - j - l][8 - l].setColor("black");
                 }
             }
         }

@@ -10,7 +10,7 @@
     width: fit-content;
 }
 
-.small{
+.small, .previe{
     border: 2px solid black;
     height: 50px;
     width: 50px;
@@ -24,4 +24,22 @@
     margin: 0 auto;
     font-size: 20px;
     text-align: center;
+    vertical-align: middle;
+    line-height: 50px;
+}
+
+.preview{
+    margin-left: 20px;
+    width: fit-content;
+    height: fit-content;
+    display: flex;
+    flex-direction: row;
+}
+
+#additional{
+    margin: 20px auto;
+    width: fit-content;
+    height: fit-content;
+    display: flex;
+    flex-direction: row;
 }
