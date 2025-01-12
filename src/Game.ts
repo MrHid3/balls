@@ -325,7 +325,6 @@ export class Game implements IGame{
             if(streak >= 5){
                 for(let l = 0; l <= streak; l++){
                     table[8 - j - l][8 - l] = -1;
-                    this.playingField[8 - j - l][8 - l].setColor("black");
                 }
             }
         }
